@@ -1,0 +1,8 @@
+[pfsense]
+address = ""
+# Must have "WebCfg - System: Certificate Manager" privileges
+username = ""
+password = ""
+
+[cert]
+id = ""
