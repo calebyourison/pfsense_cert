@@ -14,7 +14,7 @@ password = "some_password"
 id = "some_id"
 ```
 
-Build for platform or see releases for Linux.
+Build for platform or see [releases](https://github.com/calebyourison/pfsense_cert/releases/tag/ubuntu-24.04) for Linux.
 
 Usage:
 
