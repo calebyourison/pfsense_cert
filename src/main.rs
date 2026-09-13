@@ -77,8 +77,10 @@ struct PFSenseClient {
 impl PFSenseClient {
         
     fn get_csrf(&mut self, text: String) -> Result<String, Box<dyn Error>> {
-                        
+        
+        //2.8.2
         let csrf_pattern_one: Regex = Regex::new(r#"name=['"]__csrf_magic['"][^>]*value=['"]([^'"]+)['"]"#).unwrap();
+        // 2.9.0
         let csrf_pattern_two: Regex = Regex::new(r#"csrfMagicToken\s*=\s*"([^"]+)""#).unwrap();
 
         let csrf_patterns: [Regex; 2] = [csrf_pattern_one, csrf_pattern_two];
@@ -189,4 +191,40 @@ fn main() -> Result<(), Box<dyn Error>> {
     let _ = key_file.write_all(&key_bytes);
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+
+    #[test]
+    // Account for regex patterns
+    fn test_get_csrf() {
+
+        let mut test_client = PFSenseClient {
+            url:String::from(""),
+            username: String::from(""),
+            password:String::from(""),
+            session:create_client(10, false),
+        };
+        
+        let sid: String = String::from("sid:b7572a3e68b18d0a9e19bf30cb4449afee8435f3,1789301509");
+        let csrf_text_one:String = String::from(
+            "<input type=\"hidden\" name=\"__csrf_magic\" value=\"sid:b7572a3e68b18d0a9e19bf30cb4449afee8435f3,1789301509\">"
+        );
+        let crsf_text_two:String = String::from(
+            "<script type=\"text/javascript\">if (top != self) {top.location.href = self.location.href;}</script>
+            <script type=\"text/javascript\">var csrfMagicToken = \"sid:b7572a3e68b18d0a9e19bf30cb4449afee8435f3,1789301509\";var 
+            csrfMagicName = \"__csrf_magic\";</script><script src=\"/csrf/csrf-magic.js\" type=\"text/javascript\"></script></head>"
+        );
+
+        let csrf_one = test_client.get_csrf(csrf_text_one).unwrap();
+        println!("{}", &csrf_one);
+        assert_eq!(sid, csrf_one);
+
+        let csrf_two = test_client.get_csrf(crsf_text_two).unwrap();
+        assert_eq!(sid, csrf_two);
+
+    }
 }

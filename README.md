@@ -2,6 +2,8 @@
 ---
 Very simple program to download the SSL certificate and key from a PfSense firewall.  Useful for automatic renewel if this is your local certificate authority.  
 
+Currently tested on version 2.9.0
+
 Secrets are stored in the TOML file. The certificate id can be obtained in the web browser.  This file path should be supplied to the `--config` flag.  
 ```toml
 [pfsense]
